@@ -30,6 +30,7 @@ function ArtistView () {
       let latestRelease
       let albums
       let bio
+      let links
       let memberOf
 
       if (state.artist.notFound) {
@@ -58,6 +59,10 @@ function ArtistView () {
         if (state.artist.label && state.artist.label.data) {
           memberOf = renderMemberOf(state)
         }
+
+        if (state.artist.data) {
+          links = renderLinks(state)
+        }
       }
 
       return html`
@@ -69,7 +74,10 @@ function ArtistView () {
             ${latestRelease}
             ${albums}
           </div>
-          ${bio}
+          <div class="flex flex-auto flex-column flex-row-l">
+            ${bio}
+            ${links}
+          </div>
           ${memberOf}
         </section>
       `
@@ -184,7 +192,6 @@ function ArtistView () {
     }
 
     function renderBio (state) {
-      const id = Number(state.params.uid)
       const { description: body } = state.artist.data
 
       return html`
@@ -194,10 +201,19 @@ function ArtistView () {
             <article class="w-100 mb4 mw6">
               ${raw(body)}
             </article>
-            <aside id="links" class="ml4-ns">
-              ${state.cache(Links, `links-${id}`).render({ uid: id })}
-            </aside>
           </div>
+        </section>
+      `
+    }
+
+    function renderLinks (state) {
+      const { description } = state.artist.data
+      const id = Number(state.params.uid)
+
+      return html`
+        <section id="links" class="flex-auto ${!description ? 'ml4-ns' : ''}">
+          <h3 class="fw3 f4 lh-title">Links</h3>
+          ${state.cache(Links, `links-${id}`).render({ uid: id })}
         </section>
       `
     }
@@ -208,8 +224,7 @@ function ArtistView () {
 
       return html`
         <section id="members" class="flex-auto">
-          <h3 class="lh-title">Member of</h3>
-
+          <h3 class="fw3 f4 lh-title">Member of</h3>
           <div class="mw5">
             ${state.cache(LabelItem, `labels-${id}`, state, emit).render(label)}
           </div>

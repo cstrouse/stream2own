@@ -4,6 +4,7 @@ const morph = require('nanomorph')
 const logger = require('nanologger')
 const log = logger('links')
 const normalizeUrl = require('normalize-url')
+const link = require('@resonate/link-element')
 
 const apiFactoryGenerator = require('@resonate/api-factory-generator')
 const api = apiFactoryGenerator({
@@ -70,18 +71,27 @@ class Links extends Component {
       </ul>
     `
 
-    function linkItem ({ url, platform }) {
-      let value = url
+    function linkItem (props) {
+      let platform = props.platform
+      let value = props.url
 
       if (!value.includes(platform) && ['facebook', 'twitter'].includes(platform)) {
         value = value.replace(/^/, `https://${platform}.com/`)
       }
+      if (value.includes('bandcamp')) {
+        platform = 'bandcamp'
+      }
+
       const href = normalizeUrl(value, { stripWWW: false })
+
       return html`
-        <li class="mb3">
-          <a target="_blank" rel="noopener noreferer" href=${href} class="link flex items-center ttc color-inherit">
-            ${platform}
-          </a>
+        <li class="flex mb3">
+          ${link({
+            prefix: 'link flex items-center ttc color-inherit',
+            href: href,
+            target: '_blank',
+            text: platform
+          })}
         </li>
       `
     }

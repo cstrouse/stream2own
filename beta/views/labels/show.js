@@ -55,6 +55,7 @@ function LabelView () {
       let artists
       let albums
       let bio
+      let links
 
       if (state.label.notFound) {
         placeholder = renderPlaceholder('Resource not found')
@@ -70,32 +71,48 @@ function LabelView () {
         if (state.label.data && state.label.data.description) {
           bio = renderBio(state)
         }
+
+        if (state.label.data) {
+          links = renderLinks(state)
+        }
       }
 
       return html`
         <section id="content" class="flex flex-column flex-auto w-100 pb7">
           ${placeholder}
-          ${artists}
-          ${albums}
-          ${bio}
+          <div class="flex flex-column" style=${!state.label.notFound ? 'min-height:100vh' : ''}>
+            ${artists}
+            ${albums}
+          </div>
+          <div class="flex flex-auto flex-column flex-row-l">
+            ${bio}
+            ${links}
+          </div>
+        </section>
+      `
+    }
+
+    function renderLinks (state) {
+      const id = Number(state.params.uid)
+
+      return html`
+        <section id="links" class="flex-auto ml4-ns">
+          <h3 class="fw3 f4 lh-title">Links</h3>
+          ${state.cache(Links, `links-${id}`).render({ uid: id })}
         </section>
       `
     }
 
     function renderBio (state) {
-      const id = Number(state.params.uid)
-      const { name, description: body } = state.label.data
+      const { description: body } = state.label.data
 
       return html`
         <section id="bio" class="flex-auto mh3">
           <h3 class="f4 fw3">Bio</h3>
           <div class="flex flex-column flex-row-ns">
             <article class="w-100 mw6">
-              ${body ? raw(body) : html`<span class="dark-gray">${name} has not provided a biography yet.</span>`}
+              ${raw(body)}
             </article>
-            <aside id="links" class="ml4-ns">
-              ${state.cache(Links, `links-${id}`).render({ uid: id, type: 'labels' })}
-            </aside>
           </div>
         </section>
       `

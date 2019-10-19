@@ -1,7 +1,9 @@
 const Layout = require('./elements/layout')
 
 module.exports = (app) => {
-  app.route('/', Layout(require('./views/dashboard')))
+  app.route('/', Layout(require('./views/main')))
+  app.route('/discovery', Layout(require('./views/discovery')))
+  app.route('/feed', Layout(require('./views/feed')))
   app.route('/playlist/:type', Layout(require('./views/playlist')))
   app.route('/artists', Layout(require('./views/artists/list')))
   app.route('/artists/:uid', Layout(require('./views/artists/show')))

@@ -1,6 +1,11 @@
 const matchMedia = require('../lib/match-media')
 const Explore = require('../components/explore')
+const { isBrowser } = require('browser-or-node')
 
 module.exports = (state, emit) => {
-  if (matchMedia('lg')) return state.cache(Explore, 'explore').render({ user: state.user })
+  if (isBrowser && matchMedia('lg')) {
+    return state.cache(Explore, 'explore').render({
+      user: state.user
+    })
+  }
 }

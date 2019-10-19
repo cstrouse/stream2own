@@ -39,6 +39,8 @@ function app () {
     function setMeta () {
       const title = {
         '/': 'Stream2own',
+        discovery: 'Discovery',
+        feed: 'Feed',
         login: 'Login',
         'search/:q': state.params.q ? state.params.q + ' • ' + 'Search' : 'Search',
         account: 'Account',
@@ -70,17 +72,8 @@ function app () {
       })
     }
 
-    emitter.on('route:/', async () => {
-      try {
-        const response = await state.api.tracklists.get({ type: 'random' })
-
-        if (response.data) {
-          state.tracks = response.data.map(adapter)
-          emitter.emit(state.events.RENDER)
-        }
-      } catch (err) {
-        log.error(err)
-      }
+    emitter.on('route:/', () => {
+      emitter.emit(state.events.PUSHSTATE, '/discovery')
     })
 
     emitter.on('route:library/:type', () => {
